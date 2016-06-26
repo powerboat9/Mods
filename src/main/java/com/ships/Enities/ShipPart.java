@@ -11,26 +11,23 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.UUID;
+
 /**
  * Created by owen on 6/23/16.
  */
 public class ShipPart extends Entity {
+    private UUID shipUUID;
+    private UUID partUUID;
     private Ship ship;
-    private int shipID;
-
-    public int getPartID() {
-        return partID;
-    }
-
-    public void setPartID(int partID) {
-        this.partID = partID;
-    }
-
-    private int partID;
     private IBlockState blockState;
     private Block block;
     private TileEntity tile;
     private int heat;
+
+    public UUID getPartUUID() {
+        return partUUID;
+    }
 
     public int getHeat() {
         return heat;
@@ -45,7 +42,9 @@ public class ShipPart extends Entity {
     }
 
     public void setShip(Ship shipIn) {
-        shipID = shipIn.getID();
+        if (ship != null) {
+            ship.
+        } shipIn.getID();
         ship = shipIn;
     }
 

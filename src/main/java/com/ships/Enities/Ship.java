@@ -11,12 +11,11 @@ import java.util.*;
  * Created by owen on 6/23/16.
  */
 public class Ship {
-    private int id;
-    private int partNum;
     private World world;
     private HashMap parts = new HashMap();
     private List<int[]> connections;
     private boolean isDirty;
+    private UUID shipUUID;
 
     public void markDirty() {
         isDirty = true;
@@ -33,38 +32,51 @@ public class Ship {
         return isDirty;
     }
 
+    public void addPart(ShipPart partIn, boolean isFromNBTLoad) {
+        parts.put(partIn.getPartUUID(), partIn);
+        if (!isFromNBTLoad) {
+            markDirty();
+        }
+    }
+
     public void addPart(ShipPart partIn) {
-        parts.put(partIn, partIn.getPartID());
+        addPart(partIn, false);
     }
 
-    public int getNextPartID() {
-        return partNum + 1;
+    public void removePart(ShipPart partIn) {
+        parts.remove(partIn.getPartUUID());
+        markDirty();
     }
 
-    public Ship(World worldIn, List<int[]> connectionsIn) {
+    public Ship(World worldIn) {
         world = worldIn;
-        id = FindTrueShipPartLove.getNextShipID();
-        connections = connectionsIn;
+        shipUUID = UUID.randomUUID();
+        markDirty();
     }
 
     public Ship(World worldIn, NBTTagCompound nbt) {
         world = worldIn;
-        id = nbt.getInteger("id");
+        shipUUID = nbt.getUniqueId("UUID");
         NBTTagList connectionNBT = nbt.getTagList("connections", Constants.NBT.TAG_COMPOUND);
-        for (int[] data : connections) {
-            NBTTagCompound newTag = new NBTTagCompound();
-            newTag.setInteger("strength", data[0]);
-            newTag.setInteger("part_1", data[1]);
-            newTag.setInteger("part_2", data[2]);
-            connectionNBT.appendTag(newTag);
+        for (int i = 1; true; i++) {
+            NBTTagCompound newTag = (NBTTagCompound) connectionNBT.get(i);
+            if (newTag == null) {
+                break;
+            }
+            int[] data = new int[3];
+            data[0] = newTag.getInteger("strength");
+            data[1] = newTag.getInteger("part_1");
+            data[2] = newTag.getInteger("part_2");
+            connections.add(data);
         }
     }
 
-    public int getID() {
-        return id;
+    public UUID getShipUUID() {
+        return shipUUID;
     }
 
     public void save(NBTTagCompound nbt) {
+        nbt.setUniqueId("UUID", shipUUID);
         NBTTagList connectionNBT = nbt.getTagList("connections", Constants.NBT.TAG_COMPOUND);
         for (int[] data : connections) {
             NBTTagCompound newTag = new NBTTagCompound();
