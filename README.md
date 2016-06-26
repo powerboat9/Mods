@@ -1,2 +1,2 @@
 # Mods
-A resperatory filled with my mods
+A repository filled with my mods
