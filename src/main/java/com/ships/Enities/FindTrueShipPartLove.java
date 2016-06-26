@@ -16,38 +16,25 @@ import sun.security.provider.SHA5;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by owen on 6/23/16.
  */
 public class FindTrueShipPartLove extends WorldSavedData {
-    private Ship[] ships;
-    private HashMap shipIDs = new HashMap();
-    private HashMap partIDs;
-    private int nextID;
-
+    private HashMap ships;
     private static final String key = "shipData";
 
-    public int getNextShipID() {
-        int check = 0;
-        while (true) {
-        }
+    public Ship getShip(UUID uuidIn) {
+        return (Ship) ships.get(uuidIn);
     }
 
-    public Ship getShip(ShipPart partIn, World world) {
-        /*Ship retShip = (Ship) shipIDs.get(id);
-        if (retShip == null) {
-            queue(partIn, id);
+    public boolean registerPart(UUID shipUUID, ShipPart partIn) {
+        if (!ships.containsKey(shipUUID)) {
+            return false;
         }
-        return retShip;*/
-        Ship retrivedShip = new Ship(world, )
-    }
-
-    public void queue(ShipPart partIn, int id) {
-        if (partIDs.get(id) == null) {
-            partIDs.put(id, new ArrayList<ShipPart>());
-        }
-        ((ArrayList<ShipPart>) partIDs.get(id)).add(partIn);
+        Ship ship = (Ship) ships.get(shipUUID);
+        ship.addPart();
     }
 
     public static List<BlockPos> getAttached(World world, BlockPos pos) {
@@ -97,17 +84,23 @@ public class FindTrueShipPartLove extends WorldSavedData {
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagList connectionNBT = nbt.getTagList("connections", Constants.NBT.TAG_INT_ARRAY);
-        for (Ship ship : (Ship[]) shipIDs.values().toArray()) {
+        NBTTagList data = nbt.getTagList("shipSave", Constants.NBT.TAG_COMPOUND);
+        for (Ship ship : (Ship[]) ships.values().toArray()) {
             if (ship.isDirty()) {
-                for (ShipPart part : ship.getParts()) {
-                    if part.
-                }
+                NBTTagCompound newTag = new NBTTagCompound();
+                ship.save(newTag);
+                data.appendTag(newTag);
             }
         }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
+        NBTTagList data = nbt.getTagList("shipSave", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; true; i++) {
+            NBTTagCompound newTag = (NBTTagCompound) data.get(i);
+            Ship newShip = new Ship(newTag);
+            ships.put(newShip.getShipUUID(), newShip);
+        }
     }
 }

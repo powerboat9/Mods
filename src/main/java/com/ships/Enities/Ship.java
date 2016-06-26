@@ -11,15 +11,14 @@ import java.util.*;
  * Created by owen on 6/23/16.
  */
 public class Ship {
-    private World world;
     private HashMap parts = new HashMap();
     private List<int[]> connections;
     private boolean isDirty;
     private UUID shipUUID;
 
-    public void markDirty() {
+    public void markDirty(World worldIn) {
         isDirty = true;
-        FindTrueShipPartLove.get(world).markDirty();
+        FindTrueShipPartLove.get(worldIn).markDirty();
     }
 
     public HashMap getParts() {
@@ -49,13 +48,11 @@ public class Ship {
     }
 
     public Ship(World worldIn) {
-        world = worldIn;
         shipUUID = UUID.randomUUID();
-        markDirty();
+        markDirty(worldIn);
     }
 
-    public Ship(World worldIn, NBTTagCompound nbt) {
-        world = worldIn;
+    public Ship(NBTTagCompound nbt) {
         shipUUID = nbt.getUniqueId("UUID");
         NBTTagList connectionNBT = nbt.getTagList("connections", Constants.NBT.TAG_COMPOUND);
         for (int i = 1; true; i++) {
