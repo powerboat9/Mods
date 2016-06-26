@@ -1,8 +1,6 @@
 package com.ships.Enities;
 
 import com.ships.Init;
-import com.sun.crypto.provider.KeyGeneratorCore;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -11,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants;
-import sun.security.provider.SHA5;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +26,17 @@ public class FindTrueShipPartLove extends WorldSavedData {
         return (Ship) ships.get(uuidIn);
     }
 
-    public boolean registerPart(UUID shipUUID, ShipPart partIn) {
+    public boolean registerPart(UUID shipUUID, ShipPart partIn, boolean isFromNBTLoad) {
         if (!ships.containsKey(shipUUID)) {
             return false;
         }
         Ship ship = (Ship) ships.get(shipUUID);
-        ship.addPart();
+        ship.addPart(partIn, isFromNBTLoad);
+        return true;
+    }
+
+    public boolean registerPart(UUID shipUUID, ShipPart partIn) {
+        return registerPart(shipUUID, partIn, false);
     }
 
     public static List<BlockPos> getAttached(World world, BlockPos pos) {

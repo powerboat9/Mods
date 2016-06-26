@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class Ship {
     private HashMap parts = new HashMap();
-    private List<int[]> connections;
+    private List<int[]> connections = new ArrayList<int[]>();
     private boolean isDirty;
     private UUID shipUUID;
 
@@ -34,7 +34,7 @@ public class Ship {
     public void addPart(ShipPart partIn, boolean isFromNBTLoad) {
         parts.put(partIn.getPartUUID(), partIn);
         if (!isFromNBTLoad) {
-            markDirty();
+            markDirty(partIn.worldObj);
         }
     }
 
@@ -44,7 +44,7 @@ public class Ship {
 
     public void removePart(ShipPart partIn) {
         parts.remove(partIn.getPartUUID());
-        markDirty();
+        markDirty(partIn.worldObj);
     }
 
     public Ship(World worldIn) {
@@ -73,7 +73,7 @@ public class Ship {
     }
 
     public void save(NBTTagCompound nbt) {
-        nbt.setUniqueId("UUID", shipUUID);
+        nbt.setUniqueId("shipUUID", shipUUID);
         NBTTagList connectionNBT = nbt.getTagList("connections", Constants.NBT.TAG_COMPOUND);
         for (int[] data : connections) {
             NBTTagCompound newTag = new NBTTagCompound();

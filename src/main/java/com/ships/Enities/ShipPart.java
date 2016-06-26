@@ -10,6 +10,10 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenPlains;
+import net.minecraft.world.chunk.storage.ChunkLoader;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeManager;
 
 import java.util.UUID;
 
@@ -17,23 +21,22 @@ import java.util.UUID;
  * Created by owen on 6/23/16.
  */
 public class ShipPart extends Entity {
-    private UUID shipUUID;
     private UUID partUUID;
     private Ship ship;
     private IBlockState blockState;
     private Block block;
     private TileEntity tile;
-    private int heat;
+    private double heat;
 
     public UUID getPartUUID() {
         return partUUID;
     }
 
-    public int getHeat() {
+    public double getHeat() {
         return heat;
     }
 
-    public void setHeat(int heatIn) {
+    public void setHeat(double heatIn) {
         heat = heatIn;
     }
 
@@ -43,8 +46,9 @@ public class ShipPart extends Entity {
 
     public void setShip(Ship shipIn) {
         if (ship != null) {
-            ship.
-        } shipIn.getID();
+            ship.removePart(this);
+        }
+        shipIn.addPart(this);
         ship = shipIn;
     }
 
@@ -57,29 +61,24 @@ public class ShipPart extends Entity {
         block = stateIn.getBlock();
     }
 
-    public int getShipID() {
-        return shipID;
+    public UUID getShipUUID() {
+        return ship.getShipUUID();
     }
 
-    private void initProperties() {
-        this.setSize(1, 1);
-    }
-
-    public ShipPart(World worldIn, Ship shipIn) {
+    public ShipPart(World worldIn, IBlockState blockStateIn) {
         super(worldIn);
-        setShip(shipIn);
-        initProperties();
+        blockState = blockStateIn;
+        block = blockStateIn.getBlock();
+
     }
 
     public ShipPart(World worldIn) {
         super(worldIn);
-        setShip(FindTrueShipPartLove.);
     }
 
     public ShipPart(World worldIn, Ship shipIn, BlockPos pos) {
         super(worldIn);
         setShip(shipIn);
-        initProperties();
         blockState = worldIn.getBlockState(pos);
         block = blockState.getBlock();
         TileEntity tileIn = worldIn.getTileEntity(pos);
@@ -88,6 +87,8 @@ public class ShipPart extends Entity {
             worldIn.removeTileEntity(pos);
             tile = TileEntity.createTileEntity(Minecraft.getMinecraft().getIntegratedServer(), tileNBT);
         }
+        heat = (worldIn.getBiomeGenForCoords(pos).getTemperature() - 0.5) + 293.15;
+        BiomeGenPlains
     }
 
     @Override
@@ -115,21 +116,24 @@ public class ShipPart extends Entity {
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound tagCompound) {
-        shipID = tagCompound.getInteger("shipID");
+        UUID shipUUID = tagCompound.getUniqueId("shipUUID");
+        ship = FindTrueShipPartLove.get(worldObj).getShip(shipUUID);
         int blockID = tagCompound.getInteger("blockID");
-        int blockMeta = (int)tagCompound.getByte("blockMeta");
+        int blockMeta = (int) tagCompound.getByte("blockMeta");
         block = Block.getBlockById(blockID);
         blockState = block.getStateFromMeta(blockMeta);
-        heat = tagCompound.getInteger("heat");
-        partID = tagCompound.getInteger("partID");
+        heat = tagCompound.getDouble("heat");
+        partUUID = tagCompound.getUniqueId("partUUID");
+        tile = TileEntity.createTileEntity(Minecraft.getMinecraft().getIntegratedServer(), tagCompound.getCompoundTag("tileData"))
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setInteger("shipID", shipID);
+        tagCompound.setUniqueId("shipUUID", ship.getShipUUID());
         tagCompound.setInteger("blockID", Block.getIdFromBlock(block));
         tagCompound.setByte("blockMeta", (byte) block.getMetaFromState(blockState));
-        tagCompound.setInteger("heat", heat);
-        tagCompound.setInteger("partID", partID);
+        tagCompound.setDouble("heat", heat);
+        tagCompound.setUniqueId("partUUID", partUUID);
+        tile.writeToNBT(tagCompound.getCompoundTag("tileData"));
     }
 }

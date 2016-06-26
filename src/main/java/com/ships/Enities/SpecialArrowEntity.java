@@ -1,5 +1,6 @@
 package com.ships.Enities;
 
+import com.ships.Items.SpecialArrowItem;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,6 @@ public class SpecialArrowEntity extends EntityArrow {
 
     @Override
     protected ItemStack getArrowStack() {
-        return new ItemStack(new )
+        return new ItemStack(new SpecialArrowItem());
     }
 }
