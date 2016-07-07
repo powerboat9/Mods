@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  */
 @Mod(modid = "partMod", name = "Part Mod", version = "0.1.0 for 1.9")
 public class Init {
+    public static final String modid = "partMod";
+
     @SidedProxy(clientSide = "com.part.proxy.ClientProxy", serverSide = "com.part.proxy.ServerProxy")
     public CommonProxy proxy;
 
