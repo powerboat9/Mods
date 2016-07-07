@@ -88,7 +88,6 @@ public class ShipPart extends Entity {
             tile = TileEntity.createTileEntity(Minecraft.getMinecraft().getIntegratedServer(), tileNBT);
         }
         heat = (worldIn.getBiomeGenForCoords(pos).getTemperature() - 0.5) + 293.15;
-        BiomeGenPlains
     }
 
     @Override
@@ -103,7 +102,7 @@ public class ShipPart extends Entity {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (source.isProjectile() && (source.getSourceOfDamage().getClass() == SpecialArrowEntity.class) {
+        if (source.isProjectile() && (source.getSourceOfDamage().getClass() == SpecialArrowEntity.class)) {
             super.attackEntityFrom(source, amount);
             return true;
         }
@@ -124,7 +123,7 @@ public class ShipPart extends Entity {
         blockState = block.getStateFromMeta(blockMeta);
         heat = tagCompound.getDouble("heat");
         partUUID = tagCompound.getUniqueId("partUUID");
-        tile = TileEntity.createTileEntity(Minecraft.getMinecraft().getIntegratedServer(), tagCompound.getCompoundTag("tileData"))
+        tile = TileEntity.createTileEntity(Minecraft.getMinecraft().getIntegratedServer(), tagCompound.getCompoundTag("tileData"));
     }
 
     @Override
