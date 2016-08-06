@@ -21,7 +21,7 @@ public class PartRender extends Render<WorldPart> {
         boolean showLeftBottomCorner = !down || !left;
         boolean showRightBottomCorner = !down || !right;
         int[] imageArray = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-        new BufferedImage()
+        BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
     }
 
     protected PartRender(RenderManager renderManager) {
@@ -42,6 +42,6 @@ public class PartRender extends Render<WorldPart> {
 
     @Override
     protected ResourceLocation getEntityTexture(WorldPart entity) {
-        return this.renderManager.renderEngine.getDynamicTextureLocation("worldPart");
+        return this.renderManager.renderEngine.getDynamicTextureLocation("worldPart", getTexture(entity));
     }
 }
